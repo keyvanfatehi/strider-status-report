@@ -21,5 +21,9 @@
     "id": "status-report",
     "title": "Status report",
     "webapp": "webapp.js"
+  },
+  "dependencies": {
+    "bluebird": "^2.2.2",
+    "lodash": "^2.4.1"
   }
 }
