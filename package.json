@@ -1,6 +1,6 @@
 {
   "name": "strider-status-report",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Plugin to get a status report from Strider",
   "main": "webapp.js",
   "scripts": {
