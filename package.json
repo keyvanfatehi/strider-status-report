@@ -15,5 +15,11 @@
   "bugs": {
     "url": "https://github.com/henriksjostrom/strider-status-report/issues"
   },
-  "homepage": "https://github.com/henriksjostrom/strider-status-report"
+  "homepage": "https://github.com/henriksjostrom/strider-status-report",
+  "strider": {
+    "type": "api",
+    "id": "status-report",
+    "title": "Status report",
+    "webapp": "webapp.js"
+  }
 }
