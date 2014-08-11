@@ -17,7 +17,7 @@
   },
   "homepage": "https://github.com/henriksjostrom/strider-status-report",
   "strider": {
-    "type": "api",
+    "type": "job",
     "id": "status-report",
     "title": "Status report",
     "webapp": "webapp.js"
