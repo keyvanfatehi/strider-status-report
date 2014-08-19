@@ -2,22 +2,27 @@ var Promise = require('bluebird')
 var _ = require('lodash')
 
 module.exports = function (context) {
-  var Job = context.models.Job
-    , items = []
+  var Job = context.models.Job,
+      Project = context.models.Project,
+      items = [];
 
   return new Promise(function (resolve, reject) {
-    var command = {
-      map: map,
-      reduce: reduce,
-      finalize: finalize,
-      query: {},
-      sort: { 'finished': 1 },
-      out: { inline: 1 }
-    }
-
-    Job.mapReduce(command, function(err, results) {
+    Project.find({}, 'name branches.name').exec(function(err, projects) {
       if (err) { reject(err); }
-      return resolve(_.map(results,'value'));
+
+      var command = {
+        map: map,
+        reduce: reduce,
+        finalize: finalize,
+        query: {"project": {$in: _.map(projects, 'name')}},
+        sort: { 'finished': 1 },
+        out: { inline: 1 }
+      }
+
+      Job.mapReduce(command, function(err, results) {
+        if (err) { reject(err); }
+        return resolve(_.map(results,'value'));
+      });
     });
   })
 }
