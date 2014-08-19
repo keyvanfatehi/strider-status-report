@@ -14,7 +14,10 @@ module.exports = function (context) {
         map: map,
         reduce: reduce,
         finalize: finalize,
-        query: {"project": {$in: _.map(projects, 'name')}},
+        query: {
+          "project": {$in: _.map(projects, 'name')},
+          "archived": {$exists: false}
+        },
         sort: { 'finished': 1 },
         out: { inline: 1 }
       }
@@ -69,5 +72,5 @@ function finalize(key, reduced) {
   for(var i = 0; i < reduced.length; i++) {
     result.push(reduced[i].value);
   }
-  return reduced;
+  return result;
 }
