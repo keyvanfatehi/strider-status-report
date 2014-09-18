@@ -31,46 +31,49 @@ module.exports = function (context) {
 }
 
 function map() {
-  emit(this.project, {
-    branch: this.ref.branch,
+  var branches = {};
+  branches[this.ref.branch] = {
+    name: this.ref.branch,
     finished: this.finished,
     data: {
       test_exitcode: this.test_exitcode,
       deploy_exitcode: this.deploy_exitcode,
       plugin_data: this.plugin_data
     }
+  };
+
+  emit(this.project, {
+    project: this.project,
+    branches: branches
   });
 }
 
 function reduce(project, values) {
-  var branches = [],
-      jobs = {};
+  var out = {
+        project: project,
+        branches: {}
+      };
 
-  for(var i = 0; i < values.length; i++) {
-    if (! jobs[values[i].branch]) { jobs[values[i].branch] = []; }
-    jobs[values[i].branch].push(values[i]);
+  for (var i = 0; i < values.length; i++) {
+    for (var branchName in values[i].branches) {
+      var outBranch = out.branches[branchName];
+      var branch = values[i].branches[branchName]
+      if (!outBranch || branch.finished > outBranch.finished) {
+        out.branches[branchName] = branch;
+      }
+    }
   }
 
-  for (var key in jobs) {
-    print(jobs[key]);
-    branches.push({
-      name: key,
-      status: jobs[key].sort(function(x,y) {
-        return x.finished == y.finished;
-      })[jobs[key].length - 1].data
-    });
-  }
+  return out;
+}
 
+function finalize(project, reducedValue) {
+  var branches = [];
+  for (var branch in reducedValue.branches) {
+    branches.push(reducedValue.branches[branch]);
+  }
   return {
     project: project,
     branches: branches
-  }
-}
-
-function finalize(key, reduced) {
-  var result = [];
-  for(var i = 0; i < reduced.length; i++) {
-    result.push(reduced[i].value);
-  }
-  return result;
+  };
 }
